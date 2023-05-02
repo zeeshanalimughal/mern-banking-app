@@ -1,0 +1,471 @@
+@font-face {
+    font-family: Poppins;
+    src: url(../src/assets/Fonts/Sora/static/Sora-Medium.ttf);
+}
+
+body {
+    font-family: Poppins !important;
+}
+
+
+
+:root {
+    --mainColor: #0d6efd;
+    --white: white;
+    --gray: gray;
+    --black: black;
+    --red: red
+}
+
+/* Navbar */
+.navbar-toggler {
+    background-color: var(--white) !important;
+}
+
+/* Home */
+.navbar_text {
+    background-color: transparent !important;
+    color: var(--white) !important;
+}
+
+.navbar_text:hover {
+    background-color: transparent !important;
+    color: var(--white) !important;
+}
+
+.txt:hover {
+    background-color: rgb(3, 3, 202) !important;
+    border-radius: 10px;
+    margin: 0px 2px;
+}
+
+.text_hover_div {
+    margin-top: 8px !important;
+    width: 200px !important;
+    background-color: rgba(255, 255, 255, 0.4);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    /* border: none !important; */
+    text-align: justify !important;
+    padding: 10px !important;
+}
+
+.font_bold {
+    font-weight: bold !important;
+    background-color: rgb(3, 3, 202) !important;
+    border-radius: 10px;
+}
+
+.container-big {
+    height: calc(100vh - 57px);
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.Home_container {
+    height: calc(100vh - 57px);
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: -70px;
+}
+
+.container-right>img {
+    height: 500px;
+    margin-top: 80px;
+}
+
+.main_home-Section {
+    margin: 20px;
+}
+
+.main_home-Section>h3 {
+    font-weight: bold;
+}
+
+.main_home-Section>p {
+    font-weight: 600;
+}
+
+.bank-Crd-title {
+    background-color: var(--mainColor);
+    padding: 10px;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+    color: var(--white);
+}
+
+.BankImage {
+    width: 70%;
+    margin: 20px 50px 20px 50px;
+}
+
+
+
+.container-left {
+    background-color: var(--white);
+    width: 50%;
+    height: 100%;
+    margin: 50px auto !important;
+}
+
+.main_cards_section {
+    width: 100%;
+}
+
+.container-right {
+    width: 50%;
+    height: 100%;
+    float: left;
+}
+
+/* Deposite and With draw */
+
+.heading {
+    margin-bottom: 10px;
+}
+
+.guest_heading {
+    font-weight: bold;
+}
+
+.deposit_title {
+    background-color: var(--mainColor) !important;
+}
+
+.text_section {
+    margin: 20px;
+}
+
+/* create_Account */
+.error_div{
+    margin-bottom: 2% !important;
+}
+.error {
+    color: var(--red) !important;
+    margin-left: 3px !important;
+}
+.error_icon{
+    position: relative !important;
+    bottom: 3px;
+    font-size: 17px !important;
+    color: var(--red) !important;
+}
+.card_title {
+    padding-left: 20px !important;
+}
+
+.text_bold {
+    font-weight: bold;
+    margin-left: 20px !important;
+    margin-top: 15px !important;
+}
+
+.success_card {
+    width: 30rem !important;
+    margin: auto !important;
+}
+
+.login_card {
+    text-align: center !important;
+    padding: 40px !important;
+}
+
+.login_text {
+    font-weight: bold !important;
+}
+
+.add_another_account_btn_div {
+    margin-top: 10px !important;
+}
+
+.createAccount_text_section {
+    margin: 30px 10px !important;
+}
+
+.card-body {
+    padding: 2px !important;
+}
+
+.card-title {
+    background-color: var(--mainColor);
+    padding: 10px;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+    color: var(--white);
+}
+
+
+.Home_card {
+    margin: 50px auto;
+    width: 50% !important;
+}
+
+
+/* AllData */
+.Users_main_div {
+    display: flex !important;
+}
+
+.Users_Data {
+    text-align: left;
+    margin-left: 30px;
+}
+
+.data_section {
+    width: 80% !important;
+    padding: 4% !important;
+    border-radius: 10px !important;
+    border: 1px solid var(--gray) !important;
+}
+
+.data_card {
+    margin: 5% auto !important;
+}
+
+.data_heading {
+    padding: 10px 0 !important;
+    text-align: start !important;
+}
+
+.user_img {
+    margin-left: -20px;
+}
+
+.img {
+    width: 200px;
+}
+
+.user_name_div {
+    line-height: 55px;
+    font-size: 20px;
+}
+
+.all_data_heading {
+    width: 80%;
+    margin: 3% auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--gray);
+}
+
+.all_user_data {
+    border-top: 1px solid var(--gray) !important;
+    margin-top: 10px !important;
+    padding-top: 10px !important;
+    text-align: start !important;
+}
+.col,.col-4 {
+    padding-left: 10% !important;
+}
+.col-4{
+    padding-left: 5% !important;
+}
+.email{
+    text-align: center !important;
+}
+.all_data_container {
+    width: 100% !important;
+    padding: 0 !important;
+    padding-bottom: 5% !important;
+}
+
+.col {
+    width: 25% !important;
+    /* background-color: #0d6efd; */
+}
+
+.col-4 {
+    width: 50% !important;
+    width: 25% !important;
+}
+
+/* Button styling */
+.button-secondary {
+    background-color: var(--mainColor) !important;
+    margin: 20px;
+    border: none !important;
+    padding: 10px;
+    color: var(--white);
+    border-radius: 5px !important;
+}
+
+.button-secondary:focus {
+    box-shadow: var(--mainColor) 0px 1px 4px;
+}
+
+@media(max-width: 1200px) {}
+
+@media (max-width:1100px) {}
+
+@media (max-width: 1000px) {
+    .all_data_container {
+        width: 90% !important;
+        padding: 0 !important;
+    }
+
+    .data_section{
+        width: 90% !important;
+    }
+    .col {
+        text-align: center;
+        width: 22.5% !important;
+        overflow-x: scroll;
+    }
+
+    .col-4 {
+        text-align: center;
+        width: 50% !important;
+        width: 22.5% !important;
+        overflow-x: scroll;
+    }
+
+    ::-webkit-scrollbar {
+        display: none;
+    }
+
+
+    .password {
+        margin-left: -10px;
+    }
+}
+
+@media (max-width: 900px) {
+    .container-right {
+        display: none !important;
+    }
+
+    .Home_card {
+        margin: 50px auto;
+        width: 100% !important;
+    }
+
+
+}
+
+@media (max-width: 800px) {}
+
+@media (max-width: 750px) {}
+
+@media (max-width: 700px) {
+    .container-left {
+        width: 80%;
+    }
+
+    .col-4 {
+        text-align: center;
+        width: 30% !important;
+        overflow-x: scroll;
+
+    }
+
+    ::-webkit-scrollbar {
+        display: none;
+    }
+
+    .all_user_data {
+        width: 100% !important;
+        font-size: 13px;
+    }
+
+    .data_heading {
+        width: 100% !important;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 650px) {}
+
+@media (max-width: 600px) {
+    .container-left {
+        width: 90%;
+    }
+
+    .img {
+        width: 102px;
+        margin-left: 20px;
+    }
+    .user_name_div{
+        font-size: 15px !important;
+    }
+}
+
+@media (max-width: 500px) {
+    .Users_main_div {
+        display: block !important;
+    }
+
+    .Users_Data>h3 {
+        text-align: center;
+        margin: 20px;
+    }
+
+    .all_data_container {
+        /* width: 50% !important; */
+    }
+
+
+}
+
+@media (max-width: 400px) {
+    /* .card {
+        width: 100% !important;
+    } */
+
+    .Users_Data>h3 {
+        font-size: 20px;
+    }
+
+    .row .all_user_data {
+        width: 100% !important;
+    }
+    .data-section{
+        background-color: #0d6efd;
+    }
+}
+
+@media (max-width: 440px) {
+    .user_name_div {
+        font-size: 17px !important;
+    }
+}
+
+@media (max-width: 300px) {
+    .BankImage {
+        width: 70%;
+        margin: 20px 20px 20px 30px;
+    }
+
+  
+
+    .Users_Data>h3 {
+        font-size: 20px;
+    }
+
+    .all_user_data {
+        width: 95% !important;
+    }
+
+    .data_heading {
+        width: 95% !important;
+    }
+
+    .col {
+        text-align: right;
+    }
+}
+
+@media (max-width: 370px) {
+
+    .all_user_data {
+        width: 100% !important;
+    }
+
+    .data_heading {
+        width: 100% !important;
+    }
+
+    .user_name_div {
+        font-size: 17px !important;
+    }
+
+
+}

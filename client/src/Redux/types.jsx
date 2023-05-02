@@ -1,0 +1,6 @@
+const LOGIN_USER = 'LOGIN_USER'
+const REMOVE_USER = 'REMOVE_USER'
+export {
+    LOGIN_USER,
+    REMOVE_USER
+}
