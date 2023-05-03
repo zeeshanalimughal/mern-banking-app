@@ -14,7 +14,7 @@ const UserSchema = new mongoose.Schema(
     password: {
       type: String,
     },
-    type: { type: String, enum: ['employee', 'user'] },
+    type: { type: String, enum: ['employee', 'user'], default: 'user' },
     fromGoogle: {
       type: Boolean,
       default: false,

@@ -1,4 +1,5 @@
 import { createError } from "../error.js";
+import Account from "../models/Account.js";
 import User from "../models/User.js";
 
 export const update = async (req, res, next) => {
@@ -36,7 +37,10 @@ export const deleteUser = async (req, res, next) => {
 export const getUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id);
-    res.status(200).json(user);
+    if (!user) return next(createError(404, "User not found!"));
+    const { password, ...other } = user._doc;
+    const account = await Account.findOne({ user: user._id })
+    res.status(200).json({ user: other, account });
   } catch (err) {
     next(err);
   }

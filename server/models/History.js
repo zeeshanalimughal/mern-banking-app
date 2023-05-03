@@ -2,12 +2,12 @@ import mongoose from "mongoose";
 
 const historySchema = new mongoose.Schema(
     {
-        type: { type: String, enum: ['deposit', 'withdraw'], required: true },
+        type: { type: String, enum: ['deposit', 'withdraw', 'transfer'], required: true },
         amount: { type: Number, min: 1, required: true, },
         from: { type: mongoose.Schema.Types.ObjectId, ref: "User", require: true },
-        to: { type: mongoose.Schema.Types.ObjectId, ref: "User", require: true },
+        to: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
     },
     { timestamps: true }
 );
 
-export default mongoose.model("Account", historySchema);
+export default mongoose.model("History", historySchema);

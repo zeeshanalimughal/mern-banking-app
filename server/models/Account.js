@@ -6,9 +6,10 @@ const accountSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    accountBalance: { type: Number, min: 0 },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    accountStatus: { type: Boolean, default: true }
+    accountBalance: { type: Number, min: 0, default: 0 },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", index: true },
+    accountStatus: { type: Boolean, default: true },
+    accountType: { type: String, enum: ['checking', 'saving'], required: true }
   },
   { timestamps: true }
 );
