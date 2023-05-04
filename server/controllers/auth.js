@@ -53,7 +53,8 @@ export const signup = async (req, res, next) => {
     const account = new Account({
       accountNumber,
       accountType,
-      user: newUser._id
+      user: newUser._id,
+      checkDeposits:[]
     });
     await account.save();
 

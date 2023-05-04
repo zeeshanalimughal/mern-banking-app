@@ -5,7 +5,19 @@ import userRoutes from "./routes/users.js";
 import accountRoutes from "./routes/account.js";
 import authRoutes from "./routes/auth.js";
 import cookieParser from "cookie-parser";
+import path from "path"
+import fileUpload from "express-fileupload";
 
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+
+
+
+
+// C:\cb\cb-js\index.html
 
 const app = express();
 dotenv.config();
@@ -22,8 +34,13 @@ const connect = () => {
 };
 
 //middlewares
-app.use(cookieParser())
+app.use(express.static(path.join(__dirname, 'public','uploads')));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }))
+app.use(fileUpload({
+  limits: { fileSize: 50 * 1024 * 1024 },
+}));
+app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/account", accountRoutes);

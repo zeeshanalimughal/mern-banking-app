@@ -1,7 +1,10 @@
 import { createError } from "../error.js";
 import Account from "../models/Account.js";
 import History from "../models/History.js";
-
+import { fileURLToPath } from 'url';
+import path, { dirname } from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export const depositAmount = async (req, res) => {
     try {
@@ -18,6 +21,59 @@ export const depositAmount = async (req, res) => {
         await history.save();
 
         return res.status(200).json({ message: "Amount deposited successfully", status: true });
+    } catch (err) {
+        next(err);
+    }
+}
+
+export const depositCheck = async (req, res) => {
+    try {
+        const { amount, accountNumber } = req.body;
+        if (!accountNumber) return res.status(400).json({ message: "Account number is required", status: false })
+
+        if (!amount || parseFloat(amount) <= 0) return res.status(400).json({ message: "Valid amount is required", status: false });
+        const account = await Account.findOne({ accountNumber, accountStatus: true });
+        if (!account) return res.status(400).json({ message: "Account not found", status: false })
+
+        await Account.findOneAndUpdate({ accountNumber, accountStatus: true }, { $inc: { accountBalance: parseFloat(amount) } });
+
+        const history = new History({
+            from: account.user,
+            amount,
+            type: "deposit"
+        })
+        await history.save();
+
+        return res.status(200).json({ message: "Check deposited successfully", status: true });
+    } catch (err) {
+        next(err);
+    }
+}
+
+
+export const depositAmountWithCheck = async (req, res, next) => {
+    try {
+        //middlewares
+        if (!req.files || Object.keys(req.files).length === 0) {
+            return res.status(400).send('No file were uploaded.');
+        }
+        // access uploaded file with req.files.[fieldname]
+        const file = req.files.checkImage;
+
+        // move the file to the desired location
+        const fileName = new Date().getTime() + '_' + file.name.split(' ').join('');
+        const filePath = path.join(__dirname, '../public/uploads', fileName)
+        file.mv(filePath, async (err) => {
+            if (err) {
+                return res.status(500).send(err);
+            }
+            await Account.findOneAndUpdate({ user: req.user.id }, {
+                $push: { checkDeposits: { checkImage: fileName } }
+            });
+
+            return res.status(200).json({ message: "Check submitted successfully", status: true });
+
+        });
     } catch (err) {
         next(err);
     }
