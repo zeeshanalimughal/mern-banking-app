@@ -35,30 +35,36 @@ async function generateAccountNumber() {
 
 export const signup = async (req, res, next) => {
   try {
-    const { name, email, password, accountType } = req.body
-    if (!req.body.name || !req.body.email || !req.body.password || !req.body.accountType) {
+    const { name, email, password, accountType, type } = req.body
+    if (!name || !email || !password || !accountType || !type) {
       return res.status(400).json({ message: "all fields are required", status: false });
     }
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({ email });
     if (user) {
       return res.status(400).json({ message: "account already exists", status: false });
     }
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
-    const newUser = new User({ name, email, password: hash });
+    const newUser = new User({
+      name, email, type,
+      password: hash
+    });
 
     await newUser.save();
 
-    const accountNumber = await generateAccountNumber()
-    const account = new Account({
-      accountNumber,
-      accountType,
-      user: newUser._id,
-      checkDeposits:[]
-    });
-    await account.save();
+    if (type === "user") {
+      const accountNumber = await generateAccountNumber()
+      const account = new Account({
+        accountNumber,
+        accountType,
+        user: newUser._id,
+        checkDeposits: []
+      });
+      await account.save();
+      return res.status(200).json({ message: "Account created successfully", accountNumber, accountBalance: 0, status: true });
+    }
+    return res.status(200).json({ message: "Account created successfully", status: true });
 
-    res.status(200).json({ message: "Account created successfully", accountNumber, accountBalance: 0, status: true });
   } catch (err) {
     next(err);
   }

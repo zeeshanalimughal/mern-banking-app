@@ -7,7 +7,7 @@ import { verifyEmployee, verifyToken, verifyUser } from "../verifyToken.js";
 const router = express.Router();
 
 // Deposit amount
-router.post("/deposit", verifyEmployee, depositAmount)
+router.post("/deposit", verifyUser, depositAmount)
 router.post("/deposit-with-check", verifyUser, depositAmountWithCheck)
 router.post("/deposit-check", verifyEmployee, depositCheck)
 router.post("/withdraw", verifyToken, withdrawAmount)

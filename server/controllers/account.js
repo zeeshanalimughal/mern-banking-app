@@ -8,6 +8,7 @@ const __dirname = dirname(__filename);
 
 export const depositAmount = async (req, res) => {
     try {
+        if (req.user.type === "employee") return res.status(400).json({ message: "You can't deposit money" })
         const { amount } = req.body;
         if (!amount || parseFloat(amount) <= 0) return res.status(400).json({ message: "Valid amount is required", status: false });
 
@@ -28,17 +29,24 @@ export const depositAmount = async (req, res) => {
 
 export const depositCheck = async (req, res) => {
     try {
-        const { amount, accountNumber } = req.body;
+        if (req.user.type === "user") return res.status(400).json({ message: "You can't deposit check amount", status: false });
+
+        const { amount, accountNumber, checkId } =
+            req.body;
         if (!accountNumber) return res.status(400).json({ message: "Account number is required", status: false })
+        if (!checkId) return res.status(400).json({ message: "Check Id is required", status: false })
 
         if (!amount || parseFloat(amount) <= 0) return res.status(400).json({ message: "Valid amount is required", status: false });
-        const account = await Account.findOne({ accountNumber, accountStatus: true });
-        if (!account) return res.status(400).json({ message: "Account not found", status: false })
 
-        await Account.findOneAndUpdate({ accountNumber, accountStatus: true }, { $inc: { accountBalance: parseFloat(amount) } });
+        const account = await Account.findOne({ accountNumber, accountStatus: true, "checkDeposits._id": checkId, "checkDeposits.isDeposited": false });
+
+        if (!account) return res.status(400).json({ message: "Account or check not found", status: false })
+
+        await Account.findOneAndUpdate({ accountNumber, accountStatus: true, "checkDeposits._id": checkId }, { $inc: { accountBalance: parseFloat(amount) }, "checkDeposits.$.isDeposited": true });
 
         const history = new History({
             from: account.user,
+            by: req.user.id,
             amount,
             type: "deposit"
         })
@@ -53,7 +61,8 @@ export const depositCheck = async (req, res) => {
 
 export const depositAmountWithCheck = async (req, res, next) => {
     try {
-        //middlewares
+        if (req.user.type === "employee") return res.status(400).json({ message: "You can't submit check", status: false });
+
         if (!req.files || Object.keys(req.files).length === 0) {
             return res.status(400).send('No file were uploaded.');
         }
@@ -81,6 +90,7 @@ export const depositAmountWithCheck = async (req, res, next) => {
 
 export const withdrawAmount = async (req, res, next) => {
     try {
+        if (req.user.type === "employee") return res.status(400).json({ message: "You can't withdraw amount", status: false });
         const { amount } = req.body;
         if (!amount || parseFloat(amount) <= 0) return res.status(400).json({ message: "Valid amount is required", status: false });
         const enoughAmountToWithdraw = await Account.findOne({ user: req.user.id, accountBalance: { $gte: parseFloat(amount) }, accountStatus: true });
@@ -104,6 +114,8 @@ export const withdrawAmount = async (req, res, next) => {
 
 export const transferAmount = async (req, res, next) => {
     try {
+        if (req.user.type === "employee") return res.status(400).json({ message: "You can't transfer check amount", status: false });
+
         let { amount, accountNumber } = req.body;
 
         if (!accountNumber) {
