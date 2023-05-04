@@ -29,7 +29,7 @@ export const verifyEmployee = (req, res, next) => {
     if (req.user.type === "employee") {
       next();
     } else {
-      return next(createError(403, "You are not employee!"));
+      return next(createError(403, "You can't deposit check! from image"));
     }
   });
 };
