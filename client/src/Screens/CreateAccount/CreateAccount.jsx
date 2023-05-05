@@ -5,25 +5,22 @@ import { db } from '../../firebase'
 import _ from 'lodash'
 import { errorMessage, successMessage, validateEmail } from '../../utils/helpers'
 import { CREATE_ACCOUNT_SUCCESS, LOGIN } from '../../Config/paths'
-import {ExclamationCircleOutlined} from '@ant-design/icons'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
+import axios from "../../Config/api";
 
 const CreateAccount = (props) => {
     const { getAllUsers, allUser, history } = props
     const [name, setName] = useState(null)
     const [email, setEmail] = useState(null)
-    const [password, setPassword] = useState(null)
+    const [password, setPassword] = useState(null);
+    const [accountType, setAccountType] = useState("checking");
+    const [userType, setUserType] = useState("user");
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(false)
     const [successCard, setSuccessCard] = useState(false)
 
     const signUp = async () => {
         try {
-            let obj = {
-                name: name,
-                email: email,
-                password: password,
-                balance: 0
-            }
             if (!name || !password || !email) {
                 setError('Please Provide All Fields.')
                 return true
@@ -36,29 +33,31 @@ const CreateAccount = (props) => {
                 setError('Your Password Must Be At Least 8 Character')
                 return true
             }
-            console.log('obj', obj)
-            let alreadyExistEmail = _.find(allUser, { email: obj?.email })
-            if (alreadyExistEmail?.email) {
-                console.log('EMAIL ALREADY IN USE.')
-                setError('Email Already In Use.')
-                return true
-            }
+            const data = {
+                name,
+                email,
+                password,
+                accountType,
+                type: userType,
+            };
             setLoading(true)
-            await addDoc(collection(db, 'user'), obj)
-                .then((data) => {
-                    successMessage('Account Created Successfully')
-                    setLoading(false)
-                    getAllUsers()
-                    history.push(CREATE_ACCOUNT_SUCCESS)
-                    setSuccessCard(true)
+
+            axios.post('/auth/signup', data)
+                .then(response => {
+                    console.log(response.data);
+                    if (response.data.status === true) {
+                        setLoading(false)
+                        successMessage(response.data.message)
+                    }
                 })
-                .catch((e) => {
+                .catch(error => {
+                    console.error(error);
+                    setError(error.response.data.message)
                     setLoading(false)
-                    errorMessage('Something Went Wrong')
-                    console.log('Something Went Wrong ', e)
-                })
+                }); 
         } catch (e) {
             console.error('Error adding document: ', e)
+            setLoading(false)
         }
     }
 
@@ -87,6 +86,24 @@ const CreateAccount = (props) => {
                                             <div className="inputs_inner">
                                                 <span>Password</span>
                                                 <Inputs setError={setError} setState={setPassword} type='Password' placeHolder={'Enter Password'} />
+                                            </div>
+                                            <div className="inputs_inner">
+                                                <span>Account Type</span>
+                                                <div className="input-group mb-3  ">
+                                                <select  className="form-select" onChange={(e) => setAccountType(e.target.value)}>
+                                                    <option value="saving"selected>saving</option>
+                                                    <option value="checking" >current</option>
+                                                </select>
+                                                </div>
+                                            </div>
+                                            <div className="inputs_inner">
+                                                <span>User Type</span>
+                                                <div className="input-group mb-3  ">
+                                                <select  className="form-select" onChange={(e) => setUserType(e.target.value)}>
+                                                    <option value="user" selected>user</option>
+                                                    <option value="employee">employee</option>
+                                                </select>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

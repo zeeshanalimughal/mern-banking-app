@@ -7,7 +7,7 @@ import authRoutes from "./routes/auth.js";
 import cookieParser from "cookie-parser";
 import path from "path"
 import fileUpload from "express-fileupload";
-
+import cors from "cors";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
@@ -34,7 +34,8 @@ const connect = () => {
 };
 
 //middlewares
-app.use(express.static(path.join(__dirname, 'public','uploads')));
+app.use(cors("*"))
+app.use(express.static(path.join(__dirname, 'public', 'uploads')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 app.use(fileUpload({
