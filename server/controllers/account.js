@@ -203,9 +203,9 @@ export const getUserAccountHistory = async (req, res, next) => {
         const history = await History.find({
             $or: [{ to: req.user.id }, { from: req.user.id }]
         })
-            .populate("from", { name: 1 })
-            .populate("to", { name: 1 })
-            .populate("by", { name: 1 })
+            .populate("from", { name: 1,type:1 })
+            .populate("to", { name: 1,type:1 })
+            .populate("by", { name: 1,type:1 })
             .sort({ 'createdAt': -1 });
 
         if (!history) return res.status(400).json({ message: "history not found", status: false });
@@ -215,6 +215,47 @@ export const getUserAccountHistory = async (req, res, next) => {
         const checkDepositHistory = history?.filter(data => data.type == "byCheck");
 
         return res.status(200).json({ depositWithdrawHistory, transferHistory, checkDepositHistory, status: true });
+    } catch (err) {
+        next(err);
+    }
+}
+export const getCheks = async (req, res, next) => {
+    try {
+
+        const checks = await Account.find({
+            accountStatus: true,
+            checkDeposits: { $ne: [] },
+            "checkDeposits.isDeposited": false
+        }, { user: 1, accountNumber: 1, checkDeposits: 1 })
+            .populate("user", { name: 1 });
+        const checksArray = [];
+
+        checks?.forEach(check => {
+            const filteredCheckDeposits = check?.checkDeposits?.filter(deposit => deposit.isDeposited === false);
+            check.checkDeposits = filteredCheckDeposits
+            checksArray.push(check)
+        })
+
+        return res.status(200).json({ checks: checksArray, status: true });
+    } catch (err) {
+        next(err);
+    }
+}
+export const getAccountByCheckId = async (req, res, next) => {
+    try {
+        const { checkId } = req.params;
+        console.log(checkId);
+        if (!checkId) return res.status(400).json({ message: "Check id not provided", status: false })
+
+        const account = await Account.findOne({
+            accountStatus: true,
+            checkDeposits: { $ne: [] },
+            "checkDeposits.$._id": checkId
+        }, { user: 1, accountNumber: 1, checkDeposits: 1 })
+            .populate("user", { name: 1 });
+
+        console.log(111, account);
+        return res.status(200).json({ account, status: true });
     } catch (err) {
         next(err);
     }

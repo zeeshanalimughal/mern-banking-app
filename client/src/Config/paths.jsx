@@ -5,6 +5,8 @@ const DEPOSIT = '/deposit'
 const WITHDRAW = '/withdraw'
 const TRANSFER = '/transfer'
 const ALL_DATA = '/all/data'
+const ALL_CHECK_FOR_DEPOSIT = '/checks'
+const DEPOSIT_CHECK = '/check/deposit'
 const LOGIN = '/login'
 
 export {
@@ -14,6 +16,8 @@ export {
     WITHDRAW,
     TRANSFER,
     ALL_DATA,
+    ALL_CHECK_FOR_DEPOSIT,
+    DEPOSIT_CHECK,
     LOGIN,
     CREATE_ACCOUNT_SUCCESS
 }

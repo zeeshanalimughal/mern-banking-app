@@ -5,17 +5,21 @@ import { AuthContext } from '../../context/AuthContext'
 import axios from "../../Config/api";
 import { errorMessage } from '../../utils/helpers';
 import moment from 'moment';
-
+import '../../App.css'
 function AllData(props) {
     const { user } = props
     const [account, setAccount] = useState({});
 
-    const [transectionsHistory, setTransectionsHistory] = useState([]);
-    const [transectionsHistoryClone, setTransectionsHistoryClone] = useState([]);
 
     const [depositWithdrawHistory, setDepositWithdrawHistory] = useState([]);
     const [transferHistory, setTransferHistory] = useState([]);
     const [checkDepositHistory, setCheckDepositHistory] = useState([]);
+
+    const [depositWithdrawHistoryClone, setDepositWithdrawHistoryClone] = useState([]);
+    const [transferHistoryClone, setTransferHistoryClone] = useState([]);
+    const [checkDepositHistoryClone, setCheckDepositHistoryClone] = useState([]);
+
+
     // const [transectionsHistoryClone, setTransectionsHistoryClone] = useState([]);
 
 
@@ -53,6 +57,9 @@ function AllData(props) {
                 setDepositWithdrawHistory(response.data.depositWithdrawHistory);
                 setCheckDepositHistory(response.data.checkDepositHistory);
                 setTransferHistory(response.data.transferHistory);
+                setDepositWithdrawHistoryClone(response.data.depositWithdrawHistory);
+                setCheckDepositHistoryClone(response.data.checkDepositHistory);
+                setTransferHistoryClone(response.data.transferHistory);
             } else {
                 errorMessage(response.data.message)
             }
@@ -68,21 +75,58 @@ function AllData(props) {
     }, []);
 
 
-    const handleSearch = (e) => {
+    const handleSearchTableOne = (e) => {
         const searchValue = e.target.value;
         if (searchValue) {
-            const filteredTransections = transectionsHistoryClone?.filter(history => {
+            const filteredTransections = depositWithdrawHistoryClone?.filter(history => {
                 return history?.type?.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 ||
                     history?.amount?.toString().toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 ||
                     moment(history?.createdAt).format('MMMM Do YYYY, h:mm:ss a')?.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1
             })
             if (filteredTransections?.length) {
-                setTransectionsHistory(filteredTransections)
+                setDepositWithdrawHistory(filteredTransections)
             } else {
-                setTransectionsHistory([])
+                setDepositWithdrawHistory([])
             }
         } else {
-            setTransectionsHistory(transectionsHistoryClone)
+            setDepositWithdrawHistory(depositWithdrawHistoryClone)
+        }
+    }
+    const handleSearchTableTwo = (e) => {
+        const searchValue = e.target.value;
+        if (searchValue) {
+            const filteredTransections = checkDepositHistoryClone?.filter(history => {
+                return history?.type?.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 ||
+                    history?.amount?.toString().toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 ||
+                    history?.by?.name?.toString().toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 ||
+                    moment(history?.createdAt).format('MMMM Do YYYY, h:mm:ss a')?.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1
+            })
+            if (filteredTransections?.length) {
+                setCheckDepositHistory(filteredTransections)
+            } else {
+                setCheckDepositHistory([])
+            }
+        } else {
+            setCheckDepositHistory(checkDepositHistoryClone)
+        }
+    }
+    const handleSearchTableThree = (e) => {
+        const searchValue = e.target.value;
+        if (searchValue) {
+            const filteredTransections = transferHistoryClone?.filter(history => {
+                return history?.type?.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 ||
+                    history?.amount?.toString().toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 ||
+                    history?.from?.name?.toString().toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 ||
+                    history?.to?.name?.toString().toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 ||
+                    moment(history?.createdAt).format('MMMM Do YYYY, h:mm:ss a')?.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1
+            })
+            if (filteredTransections?.length) {
+                setTransferHistory(filteredTransections)
+            } else {
+                setTransferHistory([])
+            }
+        } else {
+            setTransferHistory(transferHistoryClone)
         }
     }
 
@@ -126,7 +170,7 @@ function AllData(props) {
                     <h2>Deposit and Withdraw History</h2>
                 </div>
                 <div className="container mb-2 d-flex justify-content-end">
-                    <input type="text" className='form-control w-25' onChange={handleSearch} placeholder='search...' />
+                    <input type="text" className='form-control w-25' onChange={handleSearchTableOne} placeholder='search...' />
                 </div>
                 <div className="container text-center all_data_container mb-3" style={{ maxHeight: "400px", overflowY: "auto" }}>
                     <div className="row data_heading">
@@ -157,7 +201,7 @@ function AllData(props) {
                                         {dwHistory?.amount}
                                     </div>
                                     <div className="col-4">
-                                        $ {moment(dwHistory?.createdAt).format('MMMM Do YYYY, h:mm:ss a')}
+                                        {moment(dwHistory?.createdAt).format('MMMM Do YYYY, h:mm:ss a')}
                                     </div>
                                 </div>
                             )
@@ -172,7 +216,7 @@ function AllData(props) {
                     <h2>Check Deposit History</h2>
                 </div>
                 <div className="container mb-2 d-flex justify-content-end">
-                    <input type="text" className='form-control w-25' onChange={handleSearch} placeholder='search...' />
+                    <input type="text" className='form-control w-25' onChange={handleSearchTableTwo} placeholder='search...' />
                 </div>
                 <div className="container text-center all_data_container mb-3" style={{ maxHeight: "400px", overflowY: "auto" }}>
                     <div className="row data_heading">
@@ -203,14 +247,14 @@ function AllData(props) {
                                         {cdHistory?.type}
                                     </div>
                                     <div className="col">
-                                        {cdHistory?.by?.name}
-                                        <small>{cdHistory?.by?.type}</small>
+                                        {cdHistory?.by?.name + " "}
+                                        (<small>{cdHistory?.by?.type}</small>)
                                     </div>
                                     <div className="col">
                                         {cdHistory?.amount}
                                     </div>
                                     <div className="col-4">
-                                        $ {moment(cdHistory?.createdAt).format('MMMM Do YYYY, h:mm:ss a')}
+                                        {moment(cdHistory?.createdAt).format('MMMM Do YYYY, h:mm:ss a')}
                                     </div>
                                 </div>
                             )
@@ -224,7 +268,7 @@ function AllData(props) {
                     <h2>Amount Transfer History</h2>
                 </div>
                 <div className="container mb-2 d-flex justify-content-end">
-                    <input type="text" className='form-control w-25' onChange={handleSearch} placeholder='search...' />
+                    <input type="text" className='form-control w-25' onChange={handleSearchTableThree} placeholder='search...' />
                 </div>
                 <div className="container text-center all_data_container mb-3" style={{ maxHeight: "400px", overflowY: "auto" }}>
                     <div className="row data_heading">
@@ -267,7 +311,7 @@ function AllData(props) {
                                         {tHistory?.amount}
                                     </div>
                                     <div className="col-4">
-                                        $ {moment(tHistory?.createdAt).format('MMMM Do YYYY, h:mm:ss a')}
+                                        {moment(tHistory?.createdAt).format('MMMM Do YYYY, h:mm:ss a')}
                                     </div>
                                 </div>
                             )

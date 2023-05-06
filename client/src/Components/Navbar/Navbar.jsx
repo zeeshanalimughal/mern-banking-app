@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { HOME, CREATE_ACCOUNT, DEPOSIT, WITHDRAW, ALL_DATA, LOGIN, TRANSFER } from '../../Config/paths'
+import { HOME, CREATE_ACCOUNT, DEPOSIT, WITHDRAW, ALL_DATA, LOGIN, TRANSFER, ALL_CHECK_FOR_DEPOSIT } from '../../Config/paths'
 import { useHistory } from 'react-router-dom'
 import { errorMessage } from '../../utils/helpers'
 import { useDispatch } from 'react-redux'
@@ -87,7 +87,7 @@ const Navbar = () => {
 
                                 </>
                         }
-                        {user && <>
+                        {user && user?.type==="user" && <>
                             <li className="nav-item">
                                 <div className="w3-dropdown-hover navbar_text txt">
                                     <button className={locations == '/deposit' ? 'font_bold w3-button navbar_text txt' : "w3-button navbar_text txt"} onClick={() => {
@@ -137,6 +137,21 @@ const Navbar = () => {
                                 </div>
                             </li>
                         </>
+                        }
+                        {user && user.type==="employee" && 
+                        
+                            <li className="nav-item">
+                                <div className="w3-dropdown-hover navbar_text txt">
+                                    <button className={locations === ALL_CHECK_FOR_DEPOSIT ? 'font_bold w3-button navbar_text txt' : "w3-button navbar_text txt"} onClick={() => {
+                                        // history.push(ALL_DATA)
+                                        // setPathName(window?.location?.pathname)
+                                        changeRoute(ALL_CHECK_FOR_DEPOSIT)
+                                    }}>Customer Cheks For Deposit</button>
+                                    <div className="w3-dropdown-content w3-bar-block w3-border text_hover_div">
+                                        <span className="w3-bar-item w3-button">Customers check that you can deposit from image of the check</span>
+                                    </div>
+                                </div>
+                            </li>
                         }
                     </ul>
                 </div>

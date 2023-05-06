@@ -3,13 +3,13 @@ import { getFirestore } from "firebase/firestore"
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyBzJBNBevwI7epSy240L4Czq6dNenwL92Y',
-  authDomain: 'bad-bank-react.firebaseapp.com',
-  projectId: 'bad-bank-react',
-  storageBucket: 'bad-bank-react.appspot.com',
-  messagingSenderId: '37906354449',
-  appId: '1:37906354449:web:584e593aca587d108a3cb0'
-}
+  apiKey: "AIzaSyCm4fAWCtwr3-qi611sbyJcWQwyDuwWnno",
+  authDomain: "react--login-10167.firebaseapp.com",
+  projectId: "react--login-10167",
+  storageBucket: "react--login-10167.appspot.com",
+  messagingSenderId: "294734556907",
+  appId: "1:294734556907:web:ea2b2740d582b6e0c258ae"
+};
 
 const app = initializeApp(firebaseConfig)
 export const auth = getAuth();
