@@ -11,6 +11,7 @@ const accountSchema = new mongoose.Schema(
     accountStatus: { type: Boolean, default: true },
     checkDeposits: [{
       checkImage: { type: String },
+      checkNumber: { type: String },
       isDeposited: { type: Boolean, default: false }
     }],
     accountType: { type: String, enum: ['checking', 'saving'], required: true }

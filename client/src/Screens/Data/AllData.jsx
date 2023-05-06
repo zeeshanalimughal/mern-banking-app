@@ -9,8 +9,16 @@ import moment from 'moment';
 function AllData(props) {
     const { user } = props
     const [account, setAccount] = useState({});
+
     const [transectionsHistory, setTransectionsHistory] = useState([]);
     const [transectionsHistoryClone, setTransectionsHistoryClone] = useState([]);
+
+    const [depositWithdrawHistory, setDepositWithdrawHistory] = useState([]);
+    const [transferHistory, setTransferHistory] = useState([]);
+    const [checkDepositHistory, setCheckDepositHistory] = useState([]);
+    // const [transectionsHistoryClone, setTransectionsHistoryClone] = useState([]);
+
+
     const [error, setError] = useState(null)
 
     const fetchAccount = async () => {
@@ -18,7 +26,7 @@ function AllData(props) {
             const response = await axios.get('/account/details', {
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: 'Bearer ' + user?.access_token 
+                    Authorization: 'Bearer ' + user?.access_token
                 }
             });
             if (response.status === 200) {
@@ -29,7 +37,7 @@ function AllData(props) {
         }
         catch (err) {
             console.log(err);
-            errorMessage(err.response.message)
+            errorMessage(err.response.data.message)
         }
     }
     const fetchTransectionsHistory = async () => {
@@ -38,19 +46,20 @@ function AllData(props) {
                 {
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: 'Bearer ' + user?.access_token 
+                        Authorization: 'Bearer ' + user?.access_token
                     }
                 });
             if (response.status === 200) {
-                setTransectionsHistory(response.data.history)
-                setTransectionsHistoryClone(response.data.history)
+                setDepositWithdrawHistory(response.data.depositWithdrawHistory);
+                setCheckDepositHistory(response.data.checkDepositHistory);
+                setTransferHistory(response.data.transferHistory);
             } else {
                 errorMessage(response.data.message)
             }
         }
         catch (err) {
             console.log(err);
-            errorMessage(err.response.message)
+            errorMessage(err.response.data.message)
         }
     }
     useEffect(() => {
@@ -84,7 +93,7 @@ function AllData(props) {
                 <div className="card-body container text-center">
                     <div className="  Users_main_div   ">
                         <div className="user_img">
-                            <img className='img' src={profile} />
+                            <img className='img' src={user?.profileImage || profile} />
                         </div>
                         <div className="Users_Data  ">
                             <h3>Your Information</h3>
@@ -109,48 +118,167 @@ function AllData(props) {
                     </div>
                 </div>
             </div>
-            <div className='all_data_heading'>
-                <h1>Account History</h1>
-            </div>
-            <div className="container mb-4 d-flex justify-content-end">
-                <input type="text" className='form-control w-25' onChange={handleSearch} placeholder='search...' />
-            </div>
-            <div className="container text-center all_data_container">
-                <div className="row data_heading">
-                    <div className="col">
-                        <b>#</b>
-                    </div>
-                    <div className="col">
-                        <b>Type</b>
-                    </div>
-                    <div className="col">
-                        <b>Amount</b>
-                    </div>
-                    <div className="col-4">
-                        <b>Date/Time</b>
-                    </div>
+
+
+
+            <div className='mb-4'>
+                <div className='all_data_heading'>
+                    <h2>Deposit and Withdraw History</h2>
                 </div>
-                {
-                    transectionsHistory?.map((transectionsHistory, i) => {
-                        return (
-                            <div key={i} className="row all_user_data">
-                                <div className="col">
-                                    {i + 1}
+                <div className="container mb-2 d-flex justify-content-end">
+                    <input type="text" className='form-control w-25' onChange={handleSearch} placeholder='search...' />
+                </div>
+                <div className="container text-center all_data_container mb-3" style={{ maxHeight: "400px", overflowY: "auto" }}>
+                    <div className="row data_heading">
+                        <div className="col">
+                            <b>#</b>
+                        </div>
+                        <div className="col">
+                            <b>Type</b>
+                        </div>
+                        <div className="col">
+                            <b>Amount</b>
+                        </div>
+                        <div className="col-4">
+                            <b>Date/Time</b>
+                        </div>
+                    </div>
+                    {
+                        depositWithdrawHistory?.map((dwHistory, i) => {
+                            return (
+                                <div key={i} className="row all_user_data">
+                                    <div className="col">
+                                        {i + 1}
+                                    </div>
+                                    <div className="col">
+                                        {dwHistory?.type}
+                                    </div>
+                                    <div className="col">
+                                        {dwHistory?.amount}
+                                    </div>
+                                    <div className="col-4">
+                                        $ {moment(dwHistory?.createdAt).format('MMMM Do YYYY, h:mm:ss a')}
+                                    </div>
                                 </div>
-                                <div className="col">
-                                    {transectionsHistory?.type}
-                                </div>
-                                <div className="col">
-                                    {transectionsHistory?.amount}
-                                </div>
-                                <div className="col-4">
-                                    $ {moment(transectionsHistory?.createdAt).format('MMMM Do YYYY, h:mm:ss a')}
-                                </div>
-                            </div>
-                        )
-                    })
-                }
+                            )
+                        })
+                    }
+                </div>
             </div>
+
+
+            <div className='mb-4'>
+                <div className='all_data_heading'>
+                    <h2>Check Deposit History</h2>
+                </div>
+                <div className="container mb-2 d-flex justify-content-end">
+                    <input type="text" className='form-control w-25' onChange={handleSearch} placeholder='search...' />
+                </div>
+                <div className="container text-center all_data_container mb-3" style={{ maxHeight: "400px", overflowY: "auto" }}>
+                    <div className="row data_heading">
+                        <div className="col">
+                            <b>#</b>
+                        </div>
+                        <div className="col">
+                            <b>Type</b>
+                        </div>
+                        <div className="col">
+                            <b>By</b>
+                        </div>
+                        <div className="col">
+                            <b>Amount</b>
+                        </div>
+                        <div className="col-4">
+                            <b>Date/Time</b>
+                        </div>
+                    </div>
+                    {
+                        checkDepositHistory?.map((cdHistory, i) => {
+                            return (
+                                <div key={i} className="row all_user_data">
+                                    <div className="col">
+                                        {i + 1}
+                                    </div>
+                                    <div className="col">
+                                        {cdHistory?.type}
+                                    </div>
+                                    <div className="col">
+                                        {cdHistory?.by?.name}
+                                        <small>{cdHistory?.by?.type}</small>
+                                    </div>
+                                    <div className="col">
+                                        {cdHistory?.amount}
+                                    </div>
+                                    <div className="col-4">
+                                        $ {moment(cdHistory?.createdAt).format('MMMM Do YYYY, h:mm:ss a')}
+                                    </div>
+                                </div>
+                            )
+                        })
+                    }
+                </div>
+            </div>
+
+            <div className='mb-4'>
+                <div className='all_data_heading'>
+                    <h2>Amount Transfer History</h2>
+                </div>
+                <div className="container mb-2 d-flex justify-content-end">
+                    <input type="text" className='form-control w-25' onChange={handleSearch} placeholder='search...' />
+                </div>
+                <div className="container text-center all_data_container mb-3" style={{ maxHeight: "400px", overflowY: "auto" }}>
+                    <div className="row data_heading">
+                        <div className="col">
+                            <b>#</b>
+                        </div>
+                        <div className="col">
+                            <b>Type</b>
+                        </div>
+                        <div className="col">
+                            <b>Transfer from</b>
+                        </div>
+                        <div className="col">
+                            <b>Transfer to</b>
+                        </div>
+                        <div className="col">
+                            <b>Amount</b>
+                        </div>
+                        <div className="col-4">
+                            <b>Date/Time</b>
+                        </div>
+                    </div>
+                    {
+                        transferHistory?.map((tHistory, i) => {
+                            return (
+                                <div key={i} className="row all_user_data">
+                                    <div className="col">
+                                        {i + 1}
+                                    </div>
+                                    <div className="col">
+                                        {tHistory?.type}
+                                    </div>
+                                    <div className="col">
+                                        {tHistory?.from?.name}
+                                    </div>
+                                    <div className="col">
+                                        {tHistory?.to?.name}
+                                    </div>
+                                    <div className="col">
+                                        {tHistory?.amount}
+                                    </div>
+                                    <div className="col-4">
+                                        $ {moment(tHistory?.createdAt).format('MMMM Do YYYY, h:mm:ss a')}
+                                    </div>
+                                </div>
+                            )
+                        })
+                    }
+                </div>
+            </div>
+
+
+
+
         </div>
     )
 }

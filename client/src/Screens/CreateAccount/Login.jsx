@@ -12,7 +12,10 @@ import { ExclamationCircleOutlined } from '@ant-design/icons'
 import axios from "../../Config/api";
 import { AuthContext } from "../../context/AuthContext";
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
-
+import { auth, provider } from "../../firebase";
+import { signInWithPopup } from "firebase/auth";
+import '../../App.css'
+import googleLogo from "../../assets/Images/google-logo.png"
 const Login = () => {
     const [email, setEmail] = useState(null)
     const [password, setPassword] = useState(null)
@@ -58,6 +61,39 @@ const Login = () => {
                 errorMessage(error.response.data.message)
             });
     }
+
+
+    const signInWithGoogle = async () => {
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                const data = {
+                    email:result.user.email,
+                    name:result.user.displayName,
+                    profileImage:result.user.photoURL
+                }
+                dispatch({ type: "LOGIN_START" });
+                axios.post('/auth/google', data)
+                    .then(response => {
+                        if (response.status === 200) {
+                            setSuccessCard(true)
+                            successMessage(response.data.message)
+                            dispatch({ type: "LOGIN_SUCCESS", payload: response.data });
+                            history.push(HOME)
+                        } else {
+                            errorMessage(response.data.message)
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        dispatch({ type: "LOGIN_FAILURE", payload: error.response.data });
+                        errorMessage(error.response.data.message)
+                    });
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
     return (
         <>
             <div className="container-big">
@@ -83,6 +119,11 @@ const Login = () => {
                                         </div>
                                     </div>
                                     <Button loading={loading} onClick={login} Name='Login' />
+                                    <button className='google_button' onClick={signInWithGoogle}>
+                                        <img src={googleLogo} alt="Google Icon"/>
+                                            Sign in with Google
+                                    </button>
+
                                 </div>
                             </div>
                         </div>

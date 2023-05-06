@@ -45,7 +45,6 @@ const CreateAccount = () => {
 
             axios.post('/auth/signup', data)
                 .then(response => {
-                    console.log(response.data);
                     if (response.data.status === true) {
                         setLoading(false)
                         successMessage(response.data.message)
@@ -56,7 +55,7 @@ const CreateAccount = () => {
                     console.error(error);
                     setError(error?.response?.data?.message)
                     setLoading(false)
-                }); 
+                });
         } catch (e) {
             console.error('Error adding document: ', e)
             setLoading(false)
@@ -92,19 +91,19 @@ const CreateAccount = () => {
                                             <div className="inputs_inner">
                                                 <span>Account Type</span>
                                                 <div className="input-group mb-3  ">
-                                                <select  className="form-select" onChange={(e) => setAccountType(e.target.value)}>
-                                                    <option value="saving"selected>saving</option>
-                                                    <option value="checking" >current</option>
-                                                </select>
+                                                    <select className="form-select" onChange={(e) => setAccountType(e.target.value)}>
+                                                        <option value="saving" selected>saving</option>
+                                                        <option value="checking" >current</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div className="inputs_inner">
                                                 <span>User Type</span>
                                                 <div className="input-group mb-3  ">
-                                                <select  className="form-select" onChange={(e) => setUserType(e.target.value)}>
-                                                    <option value="user" selected>user</option>
-                                                    <option value="employee">employee</option>
-                                                </select>
+                                                    <select className="form-select" onChange={(e) => setUserType(e.target.value)}>
+                                                        <option value="user" selected>user</option>
+                                                        <option value="employee">employee</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>

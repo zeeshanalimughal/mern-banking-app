@@ -29,9 +29,9 @@ const WithDraw = (props) => {
                 errorMessage(response.data.message)
             }
         }
-        catch (err) {
-            console.log(err);
-            errorMessage(err.response.message)
+        catch (error) {
+            console.log(error);
+            errorMessage(error.response.data.message)
         }
     }
     useEffect(() => {

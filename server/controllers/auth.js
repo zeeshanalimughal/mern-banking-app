@@ -100,27 +100,42 @@ export const signin = async (req, res, next) => {
 export const googleAuth = async (req, res, next) => {
   try {
     const user = await User.findOne({ email: req.body.email });
+
     if (user) {
-      const token = jwt.sign({ id: user._id }, process.env.JWT);
-      res
+      const token = jwt.sign({ id: user._id, type: user.type, fromGoogle: user.fromGoogle }, process.env.JWT);
+      const { password, ...others } = user._doc;
+      return res
         .cookie("access_token", token, {
           httpOnly: true,
         })
         .status(200)
-        .json(user._doc);
+        .json({ ...others, access_token: token });
     } else {
       const newUser = new User({
         ...req.body,
         fromGoogle: true,
       });
+
       const savedUser = await newUser.save();
       const token = jwt.sign({ id: savedUser._id, type: savedUser.type, fromGoogle: savedUser.fromGoogle }, process.env.JWT);
-      res
+
+      const accountNumber = await generateAccountNumber()
+      const account = new Account({
+        accountNumber,
+        accountType:"saving",
+        user: savedUser._id,
+        checkDeposits: []
+      });
+      await account.save();
+
+      const { password, ...others } = savedUser._doc;
+
+      return res
         .cookie("access_token", token, {
           httpOnly: true,
         })
         .status(200)
-        .json(savedUser._doc);
+        .json({ ...others, access_token: token });
     }
   } catch (err) {
     next(err);

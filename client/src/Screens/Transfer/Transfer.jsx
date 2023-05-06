@@ -32,8 +32,8 @@ const Transfer = (props) => {
                 errorMessage(response.data.message)
             }
         }
-        catch (err) {
-            setError(error.response.data.message)
+        catch (error) {
+            errorMessage(error.response.data.message)
         }
     }
     useEffect(() => {
