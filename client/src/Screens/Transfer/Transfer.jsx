@@ -5,10 +5,12 @@ import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { AuthContext } from '../../context/AuthContext'
 import axios from "../../Config/api";
 
-const Deposit = (props) => {
+const Transfer = (props) => {
     const { user } = props
 
-    const [depositValue, setDepositValue] = useState(null)
+    const [transferValue, setTransferValue] = useState(null)
+    const [accountNumber, setAccountNumber] = useState(null)
+
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(false)
     const [successCard, setSuccessCard] = useState(false)
@@ -31,8 +33,7 @@ const Deposit = (props) => {
             }
         }
         catch (err) {
-            console.log(err);
-            errorMessage(error.response.message)
+            setError(error.response.data.message)
         }
     }
     useEffect(() => {
@@ -40,27 +41,34 @@ const Deposit = (props) => {
     }, [])
 
 
-    const updateUser = async () => {
+    const transferAmount = async () => {
         try {
 
-            if (!depositValue) {
+            if (!accountNumber) {
+                setError('Please Provide Account Number.')
+                return true
+            }
+            if (!transferValue) {
                 setError('Please Provide Deposit Amount.')
                 return true
             }
-            if (isNaN(depositValue)) {
+            if (isNaN(transferValue)) {
                 setError('Must Be A Number')
                 return true
             }
-            if (depositValue < 0) {
+            if (transferValue < 0) {
                 setError('Must Be A Positive Number')
                 return true
             }
-            if (depositValue == 0) {
+            if (transferValue == 0) {
                 setError('Must Be A Higher Than 0')
                 return true
             }
-
-            axios.post('/account/deposit', { amount: depositValue }, {
+            if (transferValue > account?.accountBalance) {
+                setError(`Must Be Less Than Or Equal To ${account?.accountBalance}`)
+                return true
+            }
+            axios.post('/account/transfer', { amount: transferValue, accountNumber, type: "transfer" }, {
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: 'Bearer ' + user?.access_token
@@ -70,7 +78,7 @@ const Deposit = (props) => {
                     if (response.status === 200) {
                         setSuccessCard(true);
                         successMessage(response.data.message);
-                        setDepositValue("")
+                        setTransferValue("")
                         formRef.current.reset();
                         fetchAccount();
                     } else {
@@ -105,12 +113,16 @@ const Deposit = (props) => {
                                                 {error ? <div className='error_div'><ExclamationCircleOutlined className='error_icon' /><span className='error'> {error && error}</span></div> : null}
                                             </div>
                                             <div className="inputs_inner">
+                                                <span className='inputSpan'  >Account Number</span>
+                                                <Inputs setError={setError} setState={setAccountNumber} className='input' type='text' placeHolder={'Enter Account Number'} />
+                                            </div>
+                                            <div className="inputs_inner">
                                                 <span className='inputSpan'  >Deposit Amount</span>
-                                                <Inputs setError={setError} setState={setDepositValue} className='input' type='text' placeHolder={'Enter Deposit Amount'} />
+                                                <Inputs setError={setError} setState={setTransferValue} className='input' type='text' placeHolder={'Enter Deposit Amount'} />
                                             </div>
                                         </div>
                                     </div>
-                                    <Button loading={loading} onClick={updateUser} Name='Deposit' />
+                                    <Button loading={loading} onClick={transferAmount} Name='Transfer Amount' />
                                 </div>
                             </form>
                         </div>
@@ -122,4 +134,4 @@ const Deposit = (props) => {
     )
 }
 
-export default Deposit
+export default Transfer

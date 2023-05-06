@@ -1,5 +1,5 @@
 import Password from 'antd/lib/input/Password'
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { Inputs, Button } from '../../Components'
 import { collection, getDocs, addDoc, updateDoc, doc, } from 'firebase/firestore'
 import { db } from '../../firebase'
@@ -8,16 +8,19 @@ import { errorMessage, successMessage, validateEmail } from '../../utils/helpers
 import { HOME } from '../../Config/paths'
 import { useDispatch } from 'react-redux'
 import { loginUser } from '../../Redux/actions/authActions'
-import {ExclamationCircleOutlined} from '@ant-design/icons'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
+import axios from "../../Config/api";
+import { AuthContext } from "../../context/AuthContext";
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 
-const Login = (props) => {
-    const { getAllUsers, allUser, history, user } = props
+const Login = () => {
     const [email, setEmail] = useState(null)
     const [password, setPassword] = useState(null)
     const [error, setError] = useState(null)
-    const [loading, setLoading] = useState(false)
+    const history = useHistory()
     const [successCard, setSuccessCard] = useState(false)
-    const dispatch = useDispatch()
+
+    const { user, loading, errors, dispatch } = useContext(AuthContext);
 
     const login = async () => {
 
@@ -33,36 +36,33 @@ const Login = (props) => {
             setError('Your Password Must Be At Least 8 Character')
             return true
         }
-        setLoading(true)
-        let obj = {
+        let data = {
             email: email,
             password: password,
         }
-        let alreadyExistEmail = _.find(allUser, {
-            email: obj?.email,
-            password: obj?.password,
-        })
-        if (!alreadyExistEmail?.email) {
-            setLoading(false)
-            errorMessage('Incorrect Email or password')
-            return true
-        } else {
-            setLoading(false)
-            setSuccessCard(true)
-            successMessage('Successfully Login')
-            // sessionStorage.setItem('user', JSON.stringify(alreadyExistEmail))
-            // history.push(HOME)
-            dispatch(loginUser(alreadyExistEmail))
-        }
+        dispatch({ type: "LOGIN_START" });
+        axios.post('/auth/signin', data)
+            .then(response => {
+                if (response.status === 200) {
+                    setSuccessCard(true)
+                    successMessage(response.data.message)
+                    dispatch({ type: "LOGIN_SUCCESS", payload: response.data });
+                    history.push(HOME)
+                } else {
+                    errorMessage(response.data.message)
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                dispatch({ type: "LOGIN_FAILURE", payload: error.response.data });
+                errorMessage(error.response.data.message)
+            });
     }
-    // setTimeout(() => {
-    //     setError(null)
-    // }, 8000)
     return (
         <>
             <div className="container-big">
                 {
-                    !user?.email && !user?.password && !user?.name
+                    !user
                         ? <div className="container-left" id='container-right01'  >
                             <div className="card  create_Account_card  "   >
                                 <div className="card-body  ">
@@ -70,7 +70,7 @@ const Login = (props) => {
                                     <div className="text_section">
                                         <div className="inputs_div">
                                             <div className="inputs_inner">
-                                                {error ? <div className='error_div'><ExclamationCircleOutlined className='error_icon'/><span className='error'> {error && error}</span></div> : null}
+                                                {error ? <div className='error_div'><ExclamationCircleOutlined className='error_icon' /><span className='error'> {error && error}</span></div> : null}
                                             </div>
                                             <div className="inputs_inner">
                                                 <span>Email</span>

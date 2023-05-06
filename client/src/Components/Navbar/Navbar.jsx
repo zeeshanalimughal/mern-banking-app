@@ -1,18 +1,22 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { HOME, CREATE_ACCOUNT, DEPOSIT, WITHDRAW, ALL_DATA, LOGIN } from '../../Config/paths'
+import { HOME, CREATE_ACCOUNT, DEPOSIT, WITHDRAW, ALL_DATA, LOGIN, TRANSFER } from '../../Config/paths'
 import { useHistory } from 'react-router-dom'
 import { errorMessage } from '../../utils/helpers'
 import { useDispatch } from 'react-redux'
 import { removeUser } from '../../Redux/actions/authActions'
+import { AuthContext } from '../../context/AuthContext'
 
-const Navbar = ({ user }) => {
+const Navbar = () => {
     const history = useHistory()
+
+    const { user, dispatch } = useContext(AuthContext);
+
+
     // let locations = window?.location?.pathname
     const [locations, setPathName] = useState(window?.location?.pathname)
-    const dispatch = useDispatch()
     const changeRoute = (path) => {
-        if (user?.email && user?.password && user?.name) {
+        if (user) {
             history.push(path)
             setPathName(window?.location?.pathname)
         } else {
@@ -40,27 +44,16 @@ const Navbar = ({ user }) => {
                                 </div>
                             </div>
                         </li>
-                        <li className="nav-item">
-                            <div className="w3-dropdown-hover navbar_text">
-                                <button className={locations === '/create/account' ? 'font_bold w3-button navbar_text txt' : "w3-button navbar_text txt"} onClick={() => {
-                                    history.push(CREATE_ACCOUNT)
-                                    setPathName(window?.location?.pathname)
-                                }}>Create Account</button>
-                                <div className="w3-dropdown-content w3-bar-block w3-border text_hover_div">
-                                    <span className="w3-bar-item w3-button">Create a new account with us using your name, email, and password</span>
-                                </div>
-                            </div>
-                        </li>
+
+
                         {
-                            user?.email && user?.password && user?.name ?
+                            user ?
                                 <li className="nav-item">
                                     <div className="w3-dropdown-hover navbar_text txt">
                                         <button className={locations == '/login' ? 'font_bold w3-button navbar_text txt' : "w3-button navbar_text txt"} onClick={() => {
-                                            dispatch(removeUser())
+                                            dispatch({ type: "LOGOUT" });
                                             history.push(HOME)
                                             setPathName('/')
-                                            // sessionStorage.setItem('user', null)
-                                            // setPathName(window?.location?.pathname)
                                         }}>Logout</button>
                                         <div className="w3-dropdown-content w3-bar-block w3-border text_hover_div">
                                             <span className="w3-bar-item w3-button">Log out your account</span>
@@ -68,54 +61,83 @@ const Navbar = ({ user }) => {
                                     </div>
                                 </li>
                                 :
-                                <li className="nav-item">
-                                    <div className="w3-dropdown-hover navbar_text txt">
-                                        <button className={locations == '/login' ? 'font_bold w3-button navbar_text txt' : "w3-button navbar_text txt"} onClick={() => {
-                                            history.push(LOGIN)
-                                            setPathName(window?.location?.pathname)
-                                        }}>Login</button>
-                                        <div className="w3-dropdown-content w3-bar-block w3-border text_hover_div">
-                                            <span className="w3-bar-item w3-button">Login to your own account</span>
+                                <>
+                                    <li className="nav-item">
+                                        <div className="w3-dropdown-hover navbar_text">
+                                            <button className={locations === '/create/account' ? 'font_bold w3-button navbar_text txt' : "w3-button navbar_text txt"} onClick={() => {
+                                                history.push(CREATE_ACCOUNT)
+                                                setPathName(window?.location?.pathname)
+                                            }}>Create Account</button>
+                                            <div className="w3-dropdown-content w3-bar-block w3-border text_hover_div">
+                                                <span className="w3-bar-item w3-button">Create a new account with us using your name, email, and password</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </li>
+                                    </li>
+                                    <li className="nav-item">
+                                        <div className="w3-dropdown-hover navbar_text txt">
+                                            <button className={locations == '/login' ? 'font_bold w3-button navbar_text txt' : "w3-button navbar_text txt"} onClick={() => {
+                                                history.push(LOGIN)
+                                                setPathName(window?.location?.pathname)
+                                            }}>Login</button>
+                                            <div className="w3-dropdown-content w3-bar-block w3-border text_hover_div">
+                                                <span className="w3-bar-item w3-button">Login to your own account</span>
+                                            </div>
+                                        </div>
+                                    </li>
+
+                                </>
                         }
-                        <li className="nav-item">
-                            <div className="w3-dropdown-hover navbar_text txt">
-                                <button className={locations == '/deposit' ? 'font_bold w3-button navbar_text txt' : "w3-button navbar_text txt"} onClick={() => {
-                                    // history.push(DEPOSIT)
-                                    // setPathName(window?.location?.pathname)
-                                    changeRoute(DEPOSIT)
-                                }}>Deposit</button>
-                                <div className="w3-dropdown-content w3-bar-block w3-border text_hover_div">
-                                    <span className="w3-bar-item w3-button">Put money in your bank account</span>
+                        {user && <>
+                            <li className="nav-item">
+                                <div className="w3-dropdown-hover navbar_text txt">
+                                    <button className={locations == '/deposit' ? 'font_bold w3-button navbar_text txt' : "w3-button navbar_text txt"} onClick={() => {
+                                        // history.push(DEPOSIT)
+                                        // setPathName(window?.location?.pathname)
+                                        changeRoute(DEPOSIT)
+                                    }}>Deposit</button>
+                                    <div className="w3-dropdown-content w3-bar-block w3-border text_hover_div">
+                                        <span className="w3-bar-item w3-button">Put money in your bank account</span>
+                                    </div>
                                 </div>
-                            </div>
-                        </li>
-                        <li className="nav-item">
-                            <div className="w3-dropdown-hover navbar_text txt">
-                                <button className={locations == '/withdraw' ? 'font_bold w3-button navbar_text txt' : "w3-button navbar_text txt"} onClick={() => {
-                                    // history.push(WITHDRAW)
-                                    // setPathName(window?.location?.pathname)
-                                    changeRoute(WITHDRAW)
-                                }}>Withdraw</button>
-                                <div className="w3-dropdown-content w3-bar-block w3-border text_hover_div">
-                                    <span className="w3-bar-item w3-button">Take money out of your bank account</span>
+                            </li>
+                            <li className="nav-item">
+                                <div className="w3-dropdown-hover navbar_text txt">
+                                    <button className={locations == '/withdraw' ? 'font_bold w3-button navbar_text txt' : "w3-button navbar_text txt"} onClick={() => {
+                                        // history.push(WITHDRAW)
+                                        // setPathName(window?.location?.pathname)
+                                        changeRoute(WITHDRAW)
+                                    }}>Withdraw</button>
+                                    <div className="w3-dropdown-content w3-bar-block w3-border text_hover_div">
+                                        <span className="w3-bar-item w3-button">Take money out of your bank account</span>
+                                    </div>
                                 </div>
-                            </div>
-                        </li>
-                        <li className="nav-item">
-                            <div className="w3-dropdown-hover navbar_text txt">
-                                <button className={locations === ALL_DATA ? 'font_bold w3-button navbar_text txt' : "w3-button navbar_text txt"} onClick={() => {
-                                    // history.push(ALL_DATA)
-                                    // setPathName(window?.location?.pathname)
-                                    changeRoute(ALL_DATA)
-                                }}>All Data</button>
-                                <div className="w3-dropdown-content w3-bar-block w3-border text_hover_div">
-                                    <span className="w3-bar-item w3-button">Check your and others' Basic Information</span>
+                            </li>
+                            <li className="nav-item">
+                                <div className="w3-dropdown-hover navbar_text txt">
+                                    <button className={locations == '/transfer' ? 'font_bold w3-button navbar_text txt' : "w3-button navbar_text txt"} onClick={() => {
+                                        // history.push(WITHDRAW)
+                                        // setPathName(window?.location?.pathname)
+                                        changeRoute(TRANSFER)
+                                    }}>Transfer</button>
+                                    <div className="w3-dropdown-content w3-bar-block w3-border text_hover_div">
+                                        <span className="w3-bar-item w3-button">Take money out of your bank account</span>
+                                    </div>
                                 </div>
-                            </div>
-                        </li>
+                            </li>
+                            <li className="nav-item">
+                                <div className="w3-dropdown-hover navbar_text txt">
+                                    <button className={locations === ALL_DATA ? 'font_bold w3-button navbar_text txt' : "w3-button navbar_text txt"} onClick={() => {
+                                        // history.push(ALL_DATA)
+                                        // setPathName(window?.location?.pathname)
+                                        changeRoute(ALL_DATA)
+                                    }}>All Data</button>
+                                    <div className="w3-dropdown-content w3-bar-block w3-border text_hover_div">
+                                        <span className="w3-bar-item w3-button">Check your and others' Basic Information</span>
+                                    </div>
+                                </div>
+                            </li>
+                        </>
+                        }
                     </ul>
                 </div>
             </div>

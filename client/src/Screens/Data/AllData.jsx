@@ -1,9 +1,83 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Navbar } from '../../Components'
 import profile from '../../assets/Images/profile.png'
+import { AuthContext } from '../../context/AuthContext'
+import axios from "../../Config/api";
+import { errorMessage } from '../../utils/helpers';
+import moment from 'moment';
 
 function AllData(props) {
-    const { user, allUser } = props
+    const { user } = props
+    const [account, setAccount] = useState({});
+    const [transectionsHistory, setTransectionsHistory] = useState([]);
+    const [transectionsHistoryClone, setTransectionsHistoryClone] = useState([]);
+    const [error, setError] = useState(null)
+
+    const fetchAccount = async () => {
+        try {
+            const response = await axios.get('/account/details', {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + user?.access_token 
+                }
+            });
+            if (response.status === 200) {
+                setAccount(response.data.account)
+            } else {
+                errorMessage(response.data.message)
+            }
+        }
+        catch (err) {
+            console.log(err);
+            errorMessage(err.response.message)
+        }
+    }
+    const fetchTransectionsHistory = async () => {
+        try {
+            const response = await axios.get('/account/history',
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: 'Bearer ' + user?.access_token 
+                    }
+                });
+            if (response.status === 200) {
+                setTransectionsHistory(response.data.history)
+                setTransectionsHistoryClone(response.data.history)
+            } else {
+                errorMessage(response.data.message)
+            }
+        }
+        catch (err) {
+            console.log(err);
+            errorMessage(err.response.message)
+        }
+    }
+    useEffect(() => {
+        fetchAccount()
+        fetchTransectionsHistory()
+    }, []);
+
+
+    const handleSearch = (e) => {
+        const searchValue = e.target.value;
+        if (searchValue) {
+            const filteredTransections = transectionsHistoryClone?.filter(history => {
+                return history?.type?.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 ||
+                    history?.amount?.toString().toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 ||
+                    moment(history?.createdAt).format('MMMM Do YYYY, h:mm:ss a')?.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1
+            })
+            if (filteredTransections?.length) {
+                setTransectionsHistory(filteredTransections)
+            } else {
+                setTransectionsHistory([])
+            }
+        } else {
+            setTransectionsHistory(transectionsHistoryClone)
+        }
+    }
+
+
     return (
         <div>
             <div className="card mb-3 data_card  data_section ">
@@ -22,7 +96,13 @@ function AllData(props) {
                                     <b className='bold'>Email:</b><span> {user?.email}</span>
                                 </div>
                                 <div>
-                                    <b className='bold'>Balance:</b><span> ${user?.balance || 0}</span>
+                                    <b className='bold'>Account No:</b><span> {account?.accountNumber || 0}</span>
+                                </div>
+                                <div>
+                                    <b className='bold'>Account Type:</b><span> {account?.accountType || 0}</span>
+                                </div>
+                                <div>
+                                    <b className='bold'>Account Balance:</b><span> ${account?.accountBalance || 0}</span>
                                 </div>
                             </div>
                         </div>
@@ -30,38 +110,41 @@ function AllData(props) {
                 </div>
             </div>
             <div className='all_data_heading'>
-                <h1>All Data</h1>
+                <h1>Account History</h1>
+            </div>
+            <div className="container mb-4 d-flex justify-content-end">
+                <input type="text" className='form-control w-25' onChange={handleSearch} placeholder='search...' />
             </div>
             <div className="container text-center all_data_container">
                 <div className="row data_heading">
                     <div className="col">
-                        <b>Name</b>
-                    </div>
-                    <div className="col-4 email">
-                        <b>Email</b>
+                        <b>#</b>
                     </div>
                     <div className="col">
-                        <b>Password</b>
+                        <b>Type</b>
                     </div>
                     <div className="col">
-                        <b>Balance</b>
+                        <b>Amount</b>
+                    </div>
+                    <div className="col-4">
+                        <b>Date/Time</b>
                     </div>
                 </div>
                 {
-                    allUser?.map((val, i) => {
+                    transectionsHistory?.map((transectionsHistory, i) => {
                         return (
                             <div key={i} className="row all_user_data">
                                 <div className="col">
-                                    {val?.name}
+                                    {i + 1}
+                                </div>
+                                <div className="col">
+                                    {transectionsHistory?.type}
+                                </div>
+                                <div className="col">
+                                    {transectionsHistory?.amount}
                                 </div>
                                 <div className="col-4">
-                                    {val?.email}
-                                </div>
-                                <div className="col">
-                                    {val?.password}
-                                </div>
-                                <div className="col">
-                                    $ {val?.balance || 0}
+                                    $ {moment(transectionsHistory?.createdAt).format('MMMM Do YYYY, h:mm:ss a')}
                                 </div>
                             </div>
                         )

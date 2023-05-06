@@ -7,9 +7,9 @@ import { errorMessage, successMessage, validateEmail } from '../../utils/helpers
 import { CREATE_ACCOUNT_SUCCESS, LOGIN } from '../../Config/paths'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import axios from "../../Config/api";
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 
-const CreateAccount = (props) => {
-    const { getAllUsers, allUser, history } = props
+const CreateAccount = () => {
     const [name, setName] = useState(null)
     const [email, setEmail] = useState(null)
     const [password, setPassword] = useState(null);
@@ -18,6 +18,7 @@ const CreateAccount = (props) => {
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(false)
     const [successCard, setSuccessCard] = useState(false)
+    const history = useHistory()
 
     const signUp = async () => {
         try {
@@ -48,11 +49,12 @@ const CreateAccount = (props) => {
                     if (response.data.status === true) {
                         setLoading(false)
                         successMessage(response.data.message)
+                        history.push(LOGIN)
                     }
                 })
                 .catch(error => {
                     console.error(error);
-                    setError(error.response.data.message)
+                    setError(error?.response?.data?.message)
                     setLoading(false)
                 }); 
         } catch (e) {

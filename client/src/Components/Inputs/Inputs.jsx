@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Inputs = ({ placeHolder, type, setState, setError }) => {
+const Inputs = ({ placeHolder, type, setState, setError, disabled = false }) => {
   return (
     <>
       <div className="input-group mb-3  ">
@@ -13,7 +13,7 @@ const Inputs = ({ placeHolder, type, setState, setError }) => {
           className="form-control"
           placeholder={placeHolder}
           aria-label="Username"
-          aria-describedby="basic-addon1" required />
+          aria-describedby="basic-addon1" disabled={disabled} required />
       </div>
     </>
   )
