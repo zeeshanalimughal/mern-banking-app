@@ -6,7 +6,7 @@ import path, { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export const depositAmount = async (req, res) => {
+export const depositAmount = async (req, res,next) => {
     try {
         if (req.user.type === "employee") return res.status(400).json({ message: "You can't deposit money" })
         const { amount } = req.body;
@@ -27,7 +27,7 @@ export const depositAmount = async (req, res) => {
     }
 }
 
-export const depositCheck = async (req, res) => {
+export const depositCheck = async (req, res, next) => {
     try {
         if (req.user.type === "user") return res.status(400).json({ message: "You can't deposit check amount", status: false });
 
@@ -154,6 +154,28 @@ export const transferAmount = async (req, res, next) => {
 
 
         return res.status(200).json({ message: "Amount transfered successfully", status: true });
+    } catch (err) {
+        next(err);
+    }
+}
+
+
+
+export const getUserAccount = async (req, res, next) => {
+    try {
+        const account = await Account.findOne({ user: req.user.id });
+        if (!account) return res.status(400).json({ message: "Account not found", status: false });
+        return res.status(200).json({ account, status: true });
+    } catch (err) {
+        next(err);
+    }
+}
+export const getUserAccountHistory = async (req, res, next) => {
+    try {
+        const history = await History.find({ from: req.user.id }).sort({ 'createdAt': -1 });
+        if (!history) return res.status(400).json({ message: "history not found", status: false });
+
+        return res.status(200).json({ history, status: true });
     } catch (err) {
         next(err);
     }

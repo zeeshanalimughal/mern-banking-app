@@ -3,7 +3,10 @@ import { createError } from "./error.js";
 
 export const verifyToken = (req, res, next) => {
 
-  const token = req.cookies.access_token;
+  let token = req.headers.authorization || req.cookies.access_token;
+  if(token?.startsWith('Bearer')){
+    token = token.split(' ')[1]
+  }  
   if (!token) {
     return next(createError(401, "You are not authenticated!"));
   }
@@ -16,7 +19,7 @@ export const verifyToken = (req, res, next) => {
 
 export const verifyUser = (req, res, next) => {
   verifyToken(req, res, () => {
-    if (req.user?.id === req.params.id || req.user.type === "user") {
+    if (req.user.type === "user") {
       next();
     } else {
       return next(createError(403, "You are not authorized!"));
