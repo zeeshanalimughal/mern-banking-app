@@ -244,7 +244,6 @@ export const getCheks = async (req, res, next) => {
 export const getAccountByCheckId = async (req, res, next) => {
     try {
         const { checkId } = req.params;
-        console.log(checkId);
         if (!checkId) return res.status(400).json({ message: "Check id not provided", status: false })
 
         const account = await Account.findOne({
@@ -254,7 +253,6 @@ export const getAccountByCheckId = async (req, res, next) => {
         }, { user: 1, accountNumber: 1, checkDeposits: 1 })
             .populate("user", { name: 1 });
 
-        console.log(111, account);
         return res.status(200).json({ account, status: true });
     } catch (err) {
         next(err);
